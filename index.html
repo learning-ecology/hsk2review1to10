@@ -96,7 +96,7 @@
                 <div class="flex justify-between items-center mb-6 pb-3 border-b border-slate-100">
                     <div>
                         <h2 class="text-lg font-bold text-slate-800">Phần 1: Trắc nghiệm Ngữ pháp & Từ vựng (Units 1-10)</h2>
-                        <p class="text-xs text-slate-500">Chọn đáp án đúng nhất (A, B, C hoặc D) để hoàn thành câu.</p>
+                        <p class="text-xs text-slate-500">Chọn đáp án đúng nhất để hoàn thành câu.</p>
                     </div>
                     <div v-if="submitted.mcq" class="flex items-center space-x-3">
                         <span class="text-sm font-semibold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">
@@ -224,7 +224,7 @@
                 <div class="flex justify-between items-center mb-6 pb-3 border-b border-slate-100">
                     <div>
                         <h2 class="text-lg font-bold text-slate-800">Phần 3: Sắp xếp câu (连词成句)</h2>
-                        <p class="text-xs text-slate-500">Bấm chọn các từ ngữ theo thứ tự đúng để tạo thành câu hoàn chỉnh.</p>
+                        <p class="text-xs text-slate-500">Bấm chọn các từ ngữ được xáo trộn theo thứ tự đúng để tạo thành câu hoàn chỉnh.</p>
                     </div>
                     <div v-if="submitted.reorder" class="flex items-center space-x-3">
                         <span class="text-sm font-semibold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">
@@ -268,10 +268,10 @@
                             </span>
                         </div>
 
-                        <!-- AVAILABLE TOKENS -->
+                        <!-- SCRAMBLED/SHUFFLED AVAILABLE TOKENS -->
                         <div class="flex flex-wrap gap-2">
                             <button 
-                                v-for="tok in q.tokens" 
+                                v-for="tok in q.shuffledTokens" 
                                 :key="tok.id"
                                 @click="toggleReorderToken(q.id, tok.id)"
                                 :disabled="submitted.reorder || isTokenUsed(q.id, tok.id)"
@@ -287,7 +287,7 @@
                             <div class="font-bold text-sm text-emerald-800 mb-1">
                                 Đáp án đúng: {{ q.correctSentenceHanzi }}
                             </div>
-                            <div><span className="font-semibold">Giải thích: </span>{{ q.explanation }}</div>
+                            <div><span class="font-semibold">Giải thích: </span>{{ q.explanation }}</div>
                         </div>
                     </div>
                 </div>
@@ -841,6 +841,7 @@
                     }
                 ];
 
+                // REORDER QUESTIONS WITH SCRAMBLED SHUFFLED TOKENS
                 const questionsReorder = [
                     {
                         id: 1,
@@ -850,6 +851,13 @@
                             { id: 't3', hanzi: "打车", pinyin: "dǎchē" },
                             { id: 't4', hanzi: "去北大", pinyin: "qù Běidà" },
                             { id: 't5', hanzi: "吧", pinyin: "ba" }
+                        ],
+                        shuffledTokens: [
+                            { id: 't3', hanzi: "打车", pinyin: "dǎchē" },
+                            { id: 't5', hanzi: "吧", pinyin: "ba" },
+                            { id: 't1', hanzi: "我们", pinyin: "wǒmen" },
+                            { id: 't4', hanzi: "去北大", pinyin: "qù Běidà" },
+                            { id: 't2', hanzi: "还是", pinyin: "háishi" }
                         ],
                         correctOrder: ['t1', 't2', 't3', 't4', 't5'],
                         correctSentenceHanzi: "我们还是打车去北大吧。",
@@ -865,6 +873,14 @@
                             { id: 't5', hanzi: "红色的", pinyin: "hóngsè de" },
                             { id: 't6', hanzi: "裤子", pinyin: "kùzi" }
                         ],
+                        shuffledTokens: [
+                            { id: 't4', hanzi: "那条", pinyin: "nà tiáo" },
+                            { id: 't1', hanzi: "我", pinyin: "wǒ" },
+                            { id: 't6', hanzi: "裤子", pinyin: "kùzi" },
+                            { id: 't3', hanzi: "穿过", pinyin: "chuānguo" },
+                            { id: 't2', hanzi: "没", pinyin: "méi" },
+                            { id: 't5', hanzi: "红色的", pinyin: "hóngsè de" }
+                        ],
                         correctOrder: ['t1', 't2', 't3', 't4', 't5', 't6'],
                         correctSentenceHanzi: "我没穿过那条红色的裤子。",
                         explanation: "Cấu trúc phủ định với trợ từ động thái 过: 主语 + 没 + 动词 + 过 + 宾语."
@@ -878,6 +894,13 @@
                             { id: 't4', hanzi: "别", pinyin: "bié" },
                             { id: 't5', hanzi: "迟到了", pinyin: "chídào le" }
                         ],
+                        shuffledTokens: [
+                            { id: 't3', hanzi: "第一次", pinyin: "dì-yī cì" },
+                            { id: 't1', hanzi: "快", pinyin: "kuài" },
+                            { id: 't5', hanzi: "迟到了", pinyin: "chídào le" },
+                            { id: 't2', hanzi: "下来吧", pinyin: "xiàlái ba" },
+                            { id: 't4', hanzi: "别", pinyin: "bié" }
+                        ],
                         correctOrder: ['t1', 't2', 't3', 't4', 't5'],
                         correctSentenceHanzi: "快下来吧，第一次别迟到了。",
                         explanation: "Cấu trúc bổ ngữ xu hướng '下来' kết hợp thúc giục '快...吧' và lời khuyên '别...'."
@@ -889,6 +912,12 @@
                             { id: 't2', hanzi: "高高兴兴地", pinyin: "gāogāoxìngxìng de" },
                             { id: 't3', hanzi: "过", pinyin: "guò" },
                             { id: 't4', hanzi: "生日", pinyin: "shēngrì" }
+                        ],
+                        shuffledTokens: [
+                            { id: 't3', hanzi: "过", pinyin: "guò" },
+                            { id: 't1', hanzi: "祝你", pinyin: "zhù nǐ" },
+                            { id: 't4', hanzi: "生日", pinyin: "shēngrì" },
+                            { id: 't2', hanzi: "高高兴兴地", pinyin: "gāogāoxìngxìng de" }
                         ],
                         correctOrder: ['t1', 't2', 't3', 't4'],
                         correctSentenceHanzi: "祝你高高兴兴地过生日！",
@@ -904,6 +933,14 @@
                             { id: 't5', hanzi: "往外跑", pinyin: "wǎng wài pǎo" },
                             { id: 't6', hanzi: "去打篮球", pinyin: "qù dǎ lánqiú" }
                         ],
+                        shuffledTokens: [
+                            { id: 't5', hanzi: "往外跑", pinyin: "wǎng wài pǎo" },
+                            { id: 't2', hanzi: "一", pinyin: "yī" },
+                            { id: 't6', hanzi: "去打篮球", pinyin: "qù dǎ lánqiú" },
+                            { id: 't1', hanzi: "他", pinyin: "tā" },
+                            { id: 't4', hanzi: "就", pinyin: "jiù" },
+                            { id: 't3', hanzi: "下课", pinyin: "xiàkè" }
+                        ],
                         correctOrder: ['t1', 't2', 't3', 't4', 't5', 't6'],
                         correctSentenceHanzi: "他一下课就往外跑去打篮球。",
                         explanation: "Cấu trúc '一……就……' diễn đạt hành động vừa diễn ra thì tiếp nối hành động tiếp theo ngay."
@@ -917,6 +954,13 @@
                             { id: 't4', hanzi: "右边的", pinyin: "yòubian de" },
                             { id: 't5', hanzi: "好看", pinyin: "hǎokàn" }
                         ],
+                        shuffledTokens: [
+                            { id: 't4', hanzi: "右边的", pinyin: "yòubian de" },
+                            { id: 't1', hanzi: "左边的", pinyin: "zuǒbian de" },
+                            { id: 't5', hanzi: "好看", pinyin: "hǎokàn" },
+                            { id: 't3', hanzi: "比", pinyin: "bǐ" },
+                            { id: 't2', hanzi: "手表", pinyin: "shǒubiǎo" }
+                        ],
                         correctOrder: ['t1', 't2', 't3', 't4', 't5'],
                         correctSentenceHanzi: "左边的手表比右边的好看。",
                         explanation: "Câu so sánh hơn: A 比 B + 性容词."
@@ -928,6 +972,12 @@
                             { id: 't2', hanzi: "离", pinyin: "lí" },
                             { id: 't3', hanzi: "这里", pinyin: "zhèlǐ" },
                             { id: 't4', hanzi: "不远", pinyin: "bù yuǎn" }
+                        ],
+                        shuffledTokens: [
+                            { id: 't3', hanzi: "这里", pinyin: "zhèlǐ" },
+                            { id: 't1', hanzi: "咖啡店", pinyin: "kāfēidiàn" },
+                            { id: 't4', hanzi: "不远", pinyin: "bù yuǎn" },
+                            { id: 't2', hanzi: "离", pinyin: "lí" }
                         ],
                         correctOrder: ['t1', 't2', 't3', 't4'],
                         correctSentenceHanzi: "咖啡店离这里不远。",
@@ -942,6 +992,13 @@
                             { id: 't4', hanzi: "妈妈", pinyin: "māma" },
                             { id: 't5', hanzi: "准备考试", pinyin: "zhǔnbèi kǎoshì" }
                         ],
+                        shuffledTokens: [
+                            { id: 't3', hanzi: "还是", pinyin: "háishi" },
+                            { id: 't5', hanzi: "准备考试", pinyin: "zhǔnbèi kǎoshì" },
+                            { id: 't1', hanzi: "是你", pinyin: "shì nǐ" },
+                            { id: 't4', hanzi: "妈妈", pinyin: "māma" },
+                            { id: 't2', hanzi: "准备考试", pinyin: "zhǔnbèi kǎoshì" }
+                        ],
                         correctOrder: ['t1', 't2', 't3', 't4', 't5'],
                         correctSentenceHanzi: "是你准备考试还是妈妈准备考试？",
                         explanation: "Câu hỏi lựa chọn với '还是': (是) A 还是 B?"
@@ -952,7 +1009,7 @@
                     {
                         id: 1,
                         title: "Bài đọc 1: 到北京旅游 (Du lịch Bắc Kinh)",
-                        textHanzi: "王老师的姐姐叫王一雪。白家月和安妮是第一次来北京旅游，王一雪去机场接她们。在车上，王一雪告诉她们，这几天自己不忙，有事情可以找她。王一雪还请她们吃了北京烤鸭，给她们介绍了很多北京好看的地方。白家月觉得王一雪很好， headquarters但是白家月的中文不太好，有时不太懂王一雪的意思。",
+                        textHanzi: "王老师的姐姐叫王一雪。白家月和安妮是第一次来北京旅游，王一雪去机场接她们。在车上，王一雪告诉她们，这几天自己不忙，有事情可以找她。王一雪还请她们吃了北京烤鸭，给她们介绍了很多北京好看的地方。白家月觉得王一雪很好，但是白家月的中文不太好，有时不太懂王一雪的意思。",
                         textPinyin: "Wáng lǎoshī de jiějie jiào Wáng Yìxuě. Bái Jiāyuè hé Ānnī shì dì-yī cì lái Běijīng lǚyóu, Wáng Yìxuě qù jīchǎng jiē tāmen. Zài chē shàng, Wáng Yìxuě gàosu tāmen, zhè jǐ tiān zìjǐ bù máng, yǒu shìqing kěyǐ zhǎo tā. Wáng Yìxuě hái qǐng tāmen chī le Běijīng kǎoyā, gěi tāmen jièshào le hěn duō Běijīng hǎokàn de dìfang. Bái Jiāyuè juéde Wáng Yìxuě hěn hǎo, dànshì Bái Jiāyuè de Zhōngwén bú tài hǎo, yǒushí bú tài dǒng Wáng Yìxuě de yìsi.",
                         questions: [
                             {
