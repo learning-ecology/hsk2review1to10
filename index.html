@@ -40,8 +40,8 @@
                         <span>{{ showPinyin ? 'Pinyin: BẬT' : 'Pinyin: ẨN' }}</span>
                     </button>
 
-                    <!-- TOTAL SCORE DISPLAY -->
-                    <div class="bg-emerald-900 px-3 py-1.5 rounded-full flex items-center space-x-2 text-xs font-medium text-emerald-100">
+                    <!-- TOTAL SCORE DISPLAY (ONLY VISIBLE IF AT LEAST ONE SECTION IS SUBMITTED) -->
+                    <div v-if="hasAnySubmitted" class="bg-emerald-900 px-3 py-1.5 rounded-full flex items-center space-x-2 text-xs font-medium text-emerald-100 animate-fade-in">
                         <i data-lucide="award" class="w-4 h-4 text-amber-300"></i>
                         <span>Tổng điểm: {{ totalOverallScore.score }} / {{ totalOverallScore.total }}</span>
                     </div>
@@ -1205,6 +1205,11 @@
                     };
                 });
 
+                // CHECK IF AT LEAST ONE SECTION HAS BEEN SUBMITTED
+                const hasAnySubmitted = computed(() => {
+                    return submitted.value.mcq || submitted.value.blank || submitted.value.reorder || submitted.value.reading;
+                });
+
                 // EXPORT HTML METHOD
                 const exportHTML = () => {
                     const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
@@ -1254,6 +1259,7 @@
                     reorderScore,
                     readingScore,
                     totalOverallScore,
+                    hasAnySubmitted,
                     exportHTML
                 };
             }
